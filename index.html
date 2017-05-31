@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Welcome</title>
+        <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+            }
+            canvas{
+                border : 3px seagreen solid;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="myCanvas" width="500" height="300"></canvas>
+        <div>
+            <input id='tst' type="text" placeholder="想说的话">
+            <input id='up' type="submit" value="提交">
+        </div>
+        <div id="A">
+            <a tabindex="0" style="position: absolute;" role="button" data-toggle="popover" data-trigger="focus" title="Dismissible popover" data-content="And here's some amazing content. It's very engaging. Right?">.</a>
+        </div>
+        <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src = "https://cdn.wilddog.com/sdk/js/2.5.8/wilddog.js"></script>
+        <script>
+            var config = {
+                    authDomain: "danmu.wilddog.com",
+                    syncURL: "https://demo-tanmu.wilddogio.com"};
+            wilddog.initializeApp(config);
+            var ref = wilddog.sync().ref();
+            // 提交数据
+            $('#up').on('click',function(){
+                // 获取输入框的数据
+                var text = $("#tst").val();
+                console.info(text);
+                 // 将数据写到云端 message 节点下，child 用来定位子节点
+                // ref.child('message').push(text);
+                ref.child("note").set({
+                        "title": "张雨涵",
+                        "content":text 
+                });
+            })
+            // 绑定 'child_added' 事件，当 message 节点下有子节点新增时，就会触发回调，回调的 `snapshot` 对象包含了新增的数据
+            ref.child('message').on('child_added', function(snapshot) {
+                console.log(snapshot.val());
+            });
+            // 画圆
+            function drawQ(x,y){
+                var c=document.getElementById("myCanvas");
+                var cxt=c.getContext("2d");
+                
+                cxt.fillStyle="#FF0000";
+                cxt.beginPath();
+                cxt.arc(parseInt(x),parseInt(y),15,0,Math.PI*2,true);
+                cxt.closePath();
+                cxt.fill();
+            }
+           
+            // 假数据
+            var tempJson={
+
+                '100,100':[{'title':"zhang",'content':"I Love GLY"}],
+                '200,100':[{'title':"zhangyuhan",'content':"到此一游"}],
+            }
+            // 判断是否点到圆
+            function Panduan(x,y,json){
+                let tempXY=x+","+y;
+                console.log('>>',tempXY);
+                let t=Object.keys(json).find(function(e){
+                    console.log('e',e);
+                    console.log(x,y);
+                    let arr=e.split(',');
+                    return b2(arr[0],arr[1],15,x,y)
+                });
+                console.log(t);
+                return t;
+            }
+            // 计算点击的范围内是否有圆
+            function b2(x,y,r,px,py){
+                let maxX=parseInt(x)+parseInt(r),
+                    maxY=parseInt(y)+parseInt(r),
+                    minX=parseInt(x)-parseInt(r),
+                    minY=parseInt(y)-parseInt(r);
+                    console.info(maxX,minX,maxY,minY)
+               if(minX<=px&&px<=maxX&&minY<=py&&py<=maxY){
+                   console.log(px,py,"在这个范围内",x,y,r);
+                   return true;
+               }else{
+                   console.log("不在");
+                   return false;
+               }     
+            }
+            // 利用Bootstrap的Pop提示框显示文本
+            function pop(x,y,tit="坐标",str="信息",el="a[tabindex=0]"){
+                $(el).css({
+                    "top":x+"px",
+                    "left":y+"px",
+                }).attr({
+                    "data-original-title":tit,
+                    "title":tit,
+	                "data-content":str
+                }).popover('show');
+            }
+            // 生成圆
+            function creAre(json){
+                Object.keys(json).forEach(function(e){
+                    let arr=e.split(',');
+                    drawQ(arr[0],arr[1]);
+                })
+            }
+
+            function main(){
+                //获取数据
+                //生成圆
+                creAre(tempJson);
+                //点击事件发生后
+                // 获取到x,y
+                 // 鼠标点击获取坐标
+                 $('#myCanvas').on('click',function(e){
+                    let x=e.offsetX;
+                    let y=e.offsetY;
+                    console.info(x,y);
+                    let p=Panduan(x,y,tempJson);
+                    console.log(p,p===undefined);
+                    if(p===undefined){
+                        console.log("没有");
+                        $("a[tabindex=0]").popover('hide')
+
+                    }else{
+                        console.log("查到");
+                        let tit=tempJson[p][0].title;
+                        let con=tempJson[p][0].content;
+                        console.log(tit,con);
+                        pop(y,x,tit,con);
+                    };
+                })
+                
+                // 判断点击在哪个圆上
+
+            }
+            main();
+
+</script>
+    </body>
+</html>
