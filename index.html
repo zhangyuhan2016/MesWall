@@ -1,82 +1,153 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Welcome</title>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="keywords" content="留言，野狗云，新手引导，前端开发">
+    <meta name="description" contect="留言">
+    <meta name="author" contect="张雨涵">
+    <title>留言墙</title>
+    <link rel="shortcut icon" href="../public/favicon.ico" type="image/x-icon" />    
+        
+        <link href="https://cdn.bootcss.com/intro.js/2.5.0/introjs.min.css" rel="stylesheet">
         <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
         <style>
             *{
                 margin: 0;
                 padding: 0;
             }
-            canvas{
-                border : 3px seagreen solid;
+            .popover-title{
+                display: block  !important;
+            }
+            .introjs-helperLayer{
+                opacity: 0.1;
+            }
+            .breath-light {
+                opacity: .8;
+                overflow: hidden;
+                animation: breath 5s ease-in-out infinite;
+                width: 15px;
+                height: 15px;
+                background: #04f339;
+                border-radius: 50%;
+            }
+            @keyframes breath {
+                from {opacity: .2;}
+                50% {opacity: 1; }
+                to {opacity: .2;}
             }
         </style>
     </head>
     <body>
-        <canvas id="myCanvas" width="500" height="300"></canvas>
-        <div>
-            <input id='tst' type="text" placeholder="想说的话">
-            <input id='up' type="submit" value="提交">
+        <canvas id="myCanvas" width="1000" height="500"></canvas>
+        <nav class="navbar navbar-default navbar-fixed-bottom">
+        <div class="container">
+            <div class="row">
+            <div class="col-md-4">
+                <div class="input-group input-group-lg">
+                    
+                    <span class="input-group-addon" id="sizing-addon1"><span class="glyphicon glyphicon-star" aria-hidden="true" data-intro="输入你的名字"></span></span>
+                    <input type="text" id="name" class="form-control" placeholder="你的名字" aria-describedby="sizing-addon1">
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="input-group input-group-lg">
+                     <input type="text" class="form-control" placeholder="想说的话..." id="tst">
+                     <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" id="up">上墙!</button>
+                     </span>
+                </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+            </div>
         </div>
+        </nav>
+        <!--我太懒了，不想写，搞了个捷径解决pop-->
         <div id="A">
-            <a tabindex="0" style="position: absolute;" role="button" data-toggle="popover" data-trigger="focus" title="Dismissible popover" data-content="And here's some amazing content. It's very engaging. Right?">.</a>
+            <a class='breath-light' tabindex="0" style="position: absolute; top: 75px; left: 774px;" role="button" data-toggle="popover" data-trigger="focus" title="" data-content="asdsd" data-original-title="sadas" aria-describedby="popover311618">
+                .</a>
         </div>
+        <script src="https://cdn.bootcss.com/intro.js/2.5.0/intro.min.js"></script>
         <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
         <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src = "https://cdn.wilddog.com/sdk/js/2.5.8/wilddog.js"></script>
+        <!--引导设置-->
         <script>
-            var config = {
+              function startIntro(){
+                 var intro = introJs();
+                intro.setOptions({
+                    'prevLabel':'&larr; 上一步',
+                    'nextLabel':'下一步 &rarr;',
+                    'skipLabel':'跳过',
+                    'doneLabel':'完成',
+                    overlayOpacity: 0.2,
+                steps: [
+                        { 
+                            element:document.querySelector('#name'),
+                            intro: "在这里输入你的名字 ",
+                            position:"top"
+                        },
+                        {
+                            element: document.querySelector("#tst"),
+                            intro: "想留下来的话",
+                            position:"top"
+                        },
+                        {
+                            element:document.querySelector("#up"),
+                            intro:"点击这里看看效果吧",
+                            position:"top"
+                        }
+                        ],
+            });
+             intro.start();}
+             startIntro();
+        </script>
+        <script>
+            // 数据存放点
+            let mesArr=[];
+            let strArr=[];
+            // 配置Wilddog
+            let config = {
                     authDomain: "danmu.wilddog.com",
                     syncURL: "https://demo-tanmu.wilddogio.com"};
             wilddog.initializeApp(config);
             var ref = wilddog.sync().ref();
-            // 提交数据
-            $('#up').on('click',function(){
-                // 获取输入框的数据
-                var text = $("#tst").val();
-                console.info(text);
-                 // 将数据写到云端 message 节点下，child 用来定位子节点
-                // ref.child('message').push(text);
-                ref.child("note").set({
-                        "title": "张雨涵",
-                        "content":text 
-                });
-            })
             // 绑定 'child_added' 事件，当 message 节点下有子节点新增时，就会触发回调，回调的 `snapshot` 对象包含了新增的数据
-            ref.child('message').on('child_added', function(snapshot) {
-                console.log(snapshot.val());
+            ref.child('messages').on('child_added', function(snapshot) {
+                mesArr.push(snapshot.val());
+                mess(snapshot.val().title,snapshot.val().content);
+                creAre(mesArr);
             });
+             ref.child('message').on('child_added', function(snapshot) {
+                strArr.push(snapshot.val());
+            });
+            // 随机坐标
+            let coordinate=(x=1000,y=500)=>Math.floor(Math.random()*x)+","+Math.floor(Math.random()*y);
+            // 生成不重复的坐标
+            let ranCoord=(arr)=>{
+                let temp=coordinate();
+                if(arr.includes(temp)){
+                    ranCoord(arr);
+                }else{
+                    return temp;
+                }
+            }
             // 画圆
             function drawQ(x,y){
                 var c=document.getElementById("myCanvas");
                 var cxt=c.getContext("2d");
-                
                 cxt.fillStyle="#FF0000";
                 cxt.beginPath();
                 cxt.arc(parseInt(x),parseInt(y),15,0,Math.PI*2,true);
                 cxt.closePath();
                 cxt.fill();
             }
-           
-            // 假数据
-            var tempJson={
-
-                '100,100':[{'title':"zhang",'content':"I Love GLY"}],
-                '200,100':[{'title':"zhangyuhan",'content':"到此一游"}],
-            }
             // 判断是否点到圆
             function Panduan(x,y,json){
                 let tempXY=x+","+y;
-                console.log('>>',tempXY);
-                let t=Object.keys(json).find(function(e){
-                    console.log('e',e);
-                    console.log(x,y);
-                    let arr=e.split(',');
+                let t=json.find(function(e){
+                    let arr=e.coord.split(',');
                     return b2(arr[0],arr[1],15,x,y)
                 });
-                console.log(t);
+                // 返回查到的数据/没有为un
                 return t;
             }
             // 计算点击的范围内是否有圆
@@ -85,65 +156,84 @@
                     maxY=parseInt(y)+parseInt(r),
                     minX=parseInt(x)-parseInt(r),
                     minY=parseInt(y)-parseInt(r);
-                    console.info(maxX,minX,maxY,minY)
                if(minX<=px&&px<=maxX&&minY<=py&&py<=maxY){
-                   console.log(px,py,"在这个范围内",x,y,r);
                    return true;
                }else{
-                   console.log("不在");
                    return false;
                }     
             }
             // 利用Bootstrap的Pop提示框显示文本
             function pop(x,y,tit="坐标",str="信息",el="a[tabindex=0]"){
                 $(el).css({
-                    "top":x+"px",
-                    "left":y+"px",
+                        "top":parseInt(y-7.5)+"px",
+                        "left":parseInt(x-7.5)+"px",
                 }).attr({
                     "data-original-title":tit,
                     "title":tit,
 	                "data-content":str
                 }).popover('show');
             }
-            // 生成圆
+            // 根据数据生成圆 
             function creAre(json){
-                Object.keys(json).forEach(function(e){
-                    let arr=e.split(',');
+                for(let b of json){
+                    let arr=b.coord.split(',');
                     drawQ(arr[0],arr[1]);
-                })
+                }
             }
-
-            function main(){
-                //获取数据
-                //生成圆
-                creAre(tempJson);
-                //点击事件发生后
-                // 获取到x,y
-                 // 鼠标点击获取坐标
-                 $('#myCanvas').on('click',function(e){
+            // 鼠标点击获取坐标
+            $('#myCanvas').on('click',function(e){
                     let x=e.offsetX;
                     let y=e.offsetY;
-                    console.info(x,y);
-                    let p=Panduan(x,y,tempJson);
-                    console.log(p,p===undefined);
+                    // 进行判断
+                    let p=Panduan(x,y,mesArr);
+                    // 没点到时
                     if(p===undefined){
-                        console.log("没有");
-                        $("a[tabindex=0]").popover('hide')
-
+                        $("a[tabindex=0]").css({
+                            "top":parseInt(y-7.5)+"px",
+                            "left":parseInt(x-7.5)+"px",
+                        }).popover('hide')
                     }else{
-                        console.log("查到");
-                        let tit=tempJson[p][0].title;
-                        let con=tempJson[p][0].content;
-                        console.log(tit,con);
-                        pop(y,x,tit,con);
+                        // 点到时pop弹出
+                        let tit=p.title;
+                        let con=p.content;
+                        pop(x,y,tit,con);
                     };
+            })
+            // 提交数据
+            $('#up').on('click',function(){
+                // 获取输入框的数据
+                let title=$('#name').val()||"佚名";
+                let text = $("#tst").val()||strArr[Math.floor(Math.random()*strArr.length)];
+                // 清空文本框
+                $('#name').val("");
+                $("#tst").val("");
+                 // 将数据写到云端 messages 节点下，child 用来定位子节点
+                let postsRef = ref.child("messages");
+                postsRef.push({
+                        "coord":ranCoord(["100,100"]),
+                        "title": title,
+                        "content":text 
+                });
+            })
+            // 通知
+            function mess(tit,con){
+
+                Notification.requestPermission(function (perm) {  
+                    if (perm === "granted") { 
+                        var notification = new Notification(tit+"  发布了新留言哦~:", {  
+                         dir: "auto",  
+                         lang: "hi",  
+                         tag: "testTag",
+			 body: con,
+                         icon: "https://avatars3.githubusercontent.com/u/18086072?v=3&s=40",  
+                         
+                         }) 
+                    }else{
+                        console.log("禁止提示")
+                    }
                 })
-                
-                // 判断点击在哪个圆上
-
             }
-            main();
-
 </script>
-    </body>
-</html>
+    
+
+</body></html>
