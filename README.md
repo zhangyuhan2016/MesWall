@@ -9,6 +9,10 @@
  
   下载到本地
   
-  使用命令启动 npm start
+  使用命令启动
   
-  在浏览器输入http://localhost/mesMall.html 查看效果
+ npm install
+
+ npm start
+  
+  在浏览器输入http://localhost/index.html 查看效果
