@@ -11,4 +11,4 @@
   
   使用命令启动 npm start
   
-  在浏览器输入http://localhost/mesMall.html查看效果
+  在浏览器输入http://localhost/mesMall.html 查看效果
