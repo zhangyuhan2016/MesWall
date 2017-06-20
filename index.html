@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<<<<<<< HEAD
 <html lang="zh-cmn-Hans">
 <head>
     <meta charset="UTF-8">
@@ -10,19 +9,12 @@
     <link rel="shortcut icon" href="../public/favicon.ico" type="image/x-icon" />    
         
         <link href="https://cdn.bootcss.com/intro.js/2.5.0/introjs.min.css" rel="stylesheet">
-=======
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>留言墙</title>
->>>>>>> origin/master
         <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
         <style>
             *{
                 margin: 0;
                 padding: 0;
             }
-<<<<<<< HEAD
             .popover-title{
                 display: block  !important;
             }
@@ -43,9 +35,6 @@
                 50% {opacity: 1; }
                 to {opacity: .2;}
             }
-=======
-            
->>>>>>> origin/master
         </style>
     </head>
     <body>
@@ -56,22 +45,13 @@
             <div class="col-md-4">
                 <div class="input-group input-group-lg">
                     
-<<<<<<< HEAD
                     <span class="input-group-addon" id="sizing-addon1"><span class="glyphicon glyphicon-star" aria-hidden="true" data-intro="输入你的名字"></span></span>
                     <input type="text" id="name" class="form-control" placeholder="你的名字" aria-describedby="sizing-addon1">
-=======
-                    <span class="input-group-addon" id="sizing-addon1"><span class="glyphicon glyphicon-star" aria-hidden="true"></span></span>
-                    <input type="text" id='name' class="form-control" placeholder="你的名字" aria-describedby="sizing-addon1">
->>>>>>> origin/master
                 </div>
             </div>
             <div class="col-md-5">
                 <div class="input-group input-group-lg">
-<<<<<<< HEAD
                      <input type="text" class="form-control" placeholder="想说的话..." id="tst">
-=======
-                     <input type="text" class="form-control" placeholder="想说的话..." id='tst'>
->>>>>>> origin/master
                      <span class="input-group-btn">
                         <button class="btn btn-default" type="button" id="up">上墙!</button>
                      </span>
@@ -123,10 +103,7 @@
         <script>
             // 数据存放点
             let mesArr=[];
-<<<<<<< HEAD
             let strArr=[];
-=======
->>>>>>> origin/master
             // 配置Wilddog
             let config = {
                     authDomain: "danmu.wilddog.com",
@@ -136,15 +113,11 @@
             // 绑定 'child_added' 事件，当 message 节点下有子节点新增时，就会触发回调，回调的 `snapshot` 对象包含了新增的数据
             ref.child('messages').on('child_added', function(snapshot) {
                 mesArr.push(snapshot.val());
-<<<<<<< HEAD
                 mess(snapshot.val().title,snapshot.val().content);
                 creAre(mesArr);
             });
              ref.child('message').on('child_added', function(snapshot) {
                 strArr.push(snapshot.val());
-=======
-                creAre(mesArr);
->>>>>>> origin/master
             });
             // 随机坐标
             let coordinate=(x=1000,y=500)=>Math.floor(Math.random()*x)+","+Math.floor(Math.random()*y);
@@ -215,35 +188,22 @@
                     let p=Panduan(x,y,mesArr);
                     // 没点到时
                     if(p===undefined){
-<<<<<<< HEAD
                         $("a[tabindex=0]").css({
                             "top":parseInt(y-7.5)+"px",
                             "left":parseInt(x-7.5)+"px",
                         }).popover('hide')
-=======
-                        $("a[tabindex=0]").popover('hide')
->>>>>>> origin/master
                     }else{
                         // 点到时pop弹出
                         let tit=p.title;
                         let con=p.content;
-<<<<<<< HEAD
                         pop(x,y,tit,con);
-=======
-                        pop(y,x,tit,con);
->>>>>>> origin/master
                     };
             })
             // 提交数据
             $('#up').on('click',function(){
                 // 获取输入框的数据
-<<<<<<< HEAD
                 let title=$('#name').val()||"佚名";
                 let text = $("#tst").val()||strArr[Math.floor(Math.random()*strArr.length)];
-=======
-                let title=$('#name').val();
-                let text = $("#tst").val();
->>>>>>> origin/master
                 // 清空文本框
                 $('#name').val("");
                 $("#tst").val("");
@@ -255,10 +215,8 @@
                         "content":text 
                 });
             })
-<<<<<<< HEAD
             // 通知
             function mess(tit,con){
-
                 Notification.requestPermission(function (perm) {  
                     if (perm === "granted") { 
                         var notification = new Notification(tit+"  发布了新留言哦~:", {  
@@ -278,8 +236,3 @@
     
 
 </body></html>
-=======
-</script>
-    </body>
-</html>
->>>>>>> origin/master
