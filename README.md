@@ -5,3 +5,10 @@
  ### 使用野狗云做数据存储，前端页面使用canvas画图。
 
  ### 美化&优化中
+ 
+ 
+  下载到本地
+  
+  使用命令启动 npm start
+  
+  在浏览器输入http://localhost/mesMall.html查看效果
