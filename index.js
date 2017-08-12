@@ -6,7 +6,7 @@
                     authDomain: "danmu.wilddog.com",
                     syncURL: "https://demo-tanmu.wilddogio.com"};
             wilddog.initializeApp(config);
-            var ref = wilddog.sync().ref();
+            let ref = wilddog.sync().ref();
             // 绑定 'child_added' 事件，当 message 节点下有子节点新增时，就会触发回调，回调的 `snapshot` 对象包含了新增的数据
             ref.child('messages').on('child_added', function(snapshot) {
                 mesArr.push(snapshot.val());
@@ -119,10 +119,10 @@
             function mess(tit,con){
                 Notification.requestPermission(function (perm) {  
                     if (perm === "granted") { 
-                        var notification = new Notification(tit+"  发布了新留言哦~:", {  
+                        let notification = new Notification(tit+"  发布了新留言哦~:", {  
                          dir: "auto",  
                          lang: "hi",  
-                         tag: "testTag",
+                         tag: "msg" + tit,
 			 body: con,
                          icon: "https://avatars3.githubusercontent.com/u/18086072?v=3&s=40",  
                          
